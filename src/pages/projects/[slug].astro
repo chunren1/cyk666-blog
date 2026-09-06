@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { marked } from 'marked';
+
+const projects: Record<string, { title: string; description: string; repo: string; branch: string; tags: string[]; readmePath?: string }> = {
+  vibeMusic: {
+    title: 'vibeMusic',
+    description: '全栈音乐平台 — 从零构建的在线音乐播放器，支持歌单管理、歌词同步、个性化推荐。前后端分离架构，部署于 Cloudflare。',
+    repo: 'https://github.com/chunren1/vibeMusic',
+    branch: 'main',
+    tags: ['Vue 3', 'Java', '全栈', 'Cloudflare'],
+  },
+  LanShare: {
+    title: 'LanShare',
+    description: '局域网文件共享工具 — 电脑/手机/平板通过浏览器互相传输文件，无需外网。支持大文件分片上传、断点续传、秒传、打包下载与在线预览。',
+    repo: 'https://github.com/chunren1/LanShare-Source',
+    branch: 'main',
+    tags: ['Python', 'Node.js', '局域网', '文件传输'],
+  },
+  '学研在线': {
+    title: '学研在线',
+    description: '微服务教育平台 — 面向在线教育场景的微服务架构实践，涵盖用户中心、课程管理、学习进度追踪等核心模块。',
+    repo: 'https://github.com/chunren1/xueyan',
+    branch: 'main',
+    tags: ['微服务', 'Java', 'Spring Boot', '教育'],
+  },
+  JavaInfoHub: {
+    title: 'JavaInfoHub',
+    description: 'Java 开发者信息聚合平台 — 聚合 4 个技术源的文章与资讯，结合 AI 智能增强。WebMagic/Jsoup 爬虫 + React 18 + Spring Boot。',
+    repo: 'https://github.com/chunren1/JavaInfoHub',
+    branch: 'main',
+    tags: ['React', 'Spring Boot', '爬虫', 'AI'],
+  },
+  JobRader: {
+    title: 'JobRader',
+    description: 'AI 求职雷达 — Chrome 插件 + Next.js 的求职效率工具，一键采集招聘网站岗位数据，AI 语义分析智能评分与简历匹配度分析。',
+    repo: 'https://github.com/chunren1/JobRader',
+    branch: 'master',
+    tags: ['Chrome 插件', 'Next.js', 'AI', '求职'],
+  },
+  Myworker: {
+    title: 'Myworker',
+    description: '个人作品集网站 — 面向求职展示的全栈工程师作品集，Next.js 14 + Framer Motion 动效，突出技术能力与项目经验。',
+    repo: 'https://github.com/chunren1/Myworker',
+    branch: 'main',
+    readmePath: 'TECH_DESIGN.md',
+    tags: ['Next.js', 'React', 'Framer Motion', '作品集'],
+  },
+  blog: {
+    title: 'blog',
+    description: '本站博客应用 — 本博客的源码仓库，基于 Astro 构建的静态技术博客，支持暗色模式和中文优化排版。（原 testWeb，已重命名为 blog）',
+    repo: 'https://github.com/chunren1/testWeb',
+    branch: 'main',
+    tags: ['Astro', '静态站点', '博客'],
+  },
+};
+
+export function getStaticPaths() {
+  return ['vibeMusic', 'LanShare', '学研在线', 'JavaInfoHub', 'JobRader', 'Myworker', 'blog'].map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const project = projects[slug as string];
+
+if (!project) {
+  return Astro.redirect('/404');
+}
+
+let readmeHtml = '';
+let readmeError = '';
+try {
+  const m = project.repo.match(/github\.com\/([^/]+\/[^/]+)/);
+  const repoPath = m ? m[1] : '';
+  const rawUrl = `https://raw.githubusercontent.com/${repoPath}/${project.branch}/${project.readmePath ?? 'README.md'}`;
+  const res = await fetch(rawUrl);
+  if (res.ok) {
+    const md = await res.text();
+    readmeHtml = await marked.parse(md);
+  } else {
+    readmeError = `README 拉取失败（${res.status}），请直接访问 GitHub 查看。`;
+  }
+} catch (e) {
+  readmeError = 'README 加载失败，请直接访问 GitHub。';
+}
+---
+
+<BaseLayout title={`${project.title} - 项目笔记`}>
+  <div class="container" style="max-width: 860px; margin: 0 auto; padding: 2rem 1rem;">
+    <a href="/" style="font-size: 0.9rem; color: var(--color-text-tertiary);">← 返回首页</a>
+
+    <div style="margin-top: 1.5rem; padding: 1.5rem; border-left: 4px solid var(--color-primary, #ff6b6b); background: var(--color-bg-card, #fff); border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+      <h1 style="font-size: 1.6rem; font-weight: 700; margin: 0;">{project.title}</h1>
+      <p style="margin-top: 0.5rem; color: var(--color-text-secondary); line-height: 1.6;">{project.description}</p>
+      <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {project.tags.map((t) => (
+          <span style="padding: 2px 10px; font-size: 0.75rem; color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, transparent); border-radius: 999px;">{t}</span>
+        ))}
+      </div>
+      <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+        <a href={project.repo} target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; padding: 8px 16px; background: var(--color-primary, #ff6b6b); color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">查看源码 on GitHub ↗</a>
+        <a href={`${project.repo}/tree/${project.branch}`} target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; border: 1px solid var(--color-border); border-radius: 8px; font-size: 0.85rem; text-decoration: none;">浏览仓库</a>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">技术笔记（README）</h2>
+      <p style="font-size: 0.85rem; color: var(--color-text-tertiary); margin-bottom: 1rem;">下方内容实时拉取自 <code>{project.repo}/README.md</code>，与源码保持同步。</p>
+      <div class="prose" style="background: var(--color-bg-card, #fff); border: 1px solid var(--color-border-light, #eee); border-radius: 12px; padding: 1.5rem; overflow: auto;">
+        {readmeError ? (
+          <div>
+            <p>{readmeError}</p>
+            <p><a href={project.repo} target="_blank" rel="noopener noreferrer">前往 GitHub 查看完整 README →</a></p>
+          </div>
+        ) : (
+          <div set:html={readmeHtml} />
+        )}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .prose h1 { font-size: 1.5rem; margin: 1.2em 0 0.6em; font-weight: 700; }
+  .prose h2 { font-size: 1.25rem; margin: 1em 0 0.5em; font-weight: 600; }
+  .prose h3 { font-size: 1.1rem; margin: 0.8em 0 0.4em; }
+  .prose p { line-height: 1.7; margin: 0.6em 0; }
+  .prose code { background: rgba(0,0,0,0.05); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.85em; }
+  .prose pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; overflow: auto; }
+  .prose pre code { background: transparent; padding: 0; }
+  .prose a { color: var(--color-primary); text-decoration: underline; }
+  .prose ul, .prose ol { margin-left: 1.2em; line-height: 1.7; }
+  .prose img { max-width: 100%; border-radius: 8px; }
+</style>

@@ -1,0 +1,286 @@
+---
+import { Folder, ExternalLink } from '@lucide/astro';
+import GithubIcon from './GithubIcon.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  repo: string;
+  demo?: string;
+  tags: string[];
+}
+
+const { title, description, repo, demo, tags } = Astro.props;
+---
+
+<div class="project-card">
+  <div class="card-tilt-wrapper">
+    <!-- Spotlight overlay -->
+    <div class="card-spotlight"></div>
+    <!-- Top accent line -->
+    <div class="card-accent-line"></div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div class="card-icon-wrap">
+          <Folder size={20} class="card-icon" />
+        </div>
+        <div class="card-links">
+          <a href={repo} target="_blank" rel="noopener noreferrer" class="link-btn" aria-label="GitHub 仓库">
+            <GithubIcon size={18} />
+          </a>
+          {demo && (
+            <a href={demo} target="_blank" rel="noopener noreferrer" class="link-btn" aria-label="在线演示">
+              <ExternalLink size={18} />
+            </a>
+          )}
+        </div>
+      </div>
+      <a href={`/projects/${encodeURIComponent(title)}`} class="card-title-link" style="text-decoration: none;">
+        <h3 class="card-title">{title}</h3>
+      </a>
+      <p class="card-desc">{description}</p>
+      {tags.length > 0 && (
+        <div class="card-tags">
+          {tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+<script>
+  function initProjectCards() {
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.querySelectorAll<HTMLElement>('.project-card').forEach((card) => {
+      const wrapper = card.querySelector<HTMLElement>('.card-tilt-wrapper');
+      if (!wrapper) return;
+
+      const maxTilt = 6;
+
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        // Tilt: rotateY based on horizontal position, rotateX based on vertical
+        const rotateY = (x - 0.5) * maxTilt * 2; // -6 to 6
+        const rotateX = -(y - 0.5) * maxTilt * 2; // -6 to 6 (inverted for natural feel)
+
+        wrapper.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        // Spotlight position
+        const mx = ((e.clientX - rect.left) / rect.width) * 100;
+        const my = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mx', `${mx}%`);
+        card.style.setProperty('--my', `${my}%`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        wrapper.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg)';
+      });
+    });
+  }
+
+  // View Transitions 导航替换 DOM 后需重新绑定，不能用 DOMContentLoaded（只触发一次）
+  document.addEventListener('astro:page-load', initProjectCards);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectCards);
+  } else {
+    initProjectCards();
+  }
+</script>
+
+<style>
+  .project-card {
+    position: relative;
+    perspective: 600px;
+  }
+
+  .card-tilt-wrapper {
+    position: relative;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    background: var(--color-bg-card);
+    display: flex;
+    flex-direction: column;
+    transform: perspective(600px) rotateX(0deg) rotateY(0deg);
+    transition:
+      border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard),
+      transform 300ms var(--ease-out);
+    overflow: hidden;
+  }
+
+  .project-card:hover .card-tilt-wrapper {
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    box-shadow:
+      0 4px 16px rgba(33, 28, 21, 0.08),
+      0 8px 32px color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  /* ── Top accent line ── */
+  .card-accent-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      color-mix(in srgb, var(--accent) 60%, transparent),
+      var(--color-primary-light)
+    );
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out);
+    z-index: 2;
+  }
+
+  .project-card:hover .card-accent-line {
+    transform: scaleX(1);
+  }
+
+  /* ── Spotlight overlay ── */
+  .card-spotlight {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      320px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--color-primary) 6%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-standard);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: var(--radius-lg);
+  }
+
+  .project-card:hover .card-spotlight {
+    opacity: 1;
+  }
+
+  .card-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── Header ── */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .card-icon-wrap {
+    color: var(--color-primary);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .project-card:hover .card-icon-wrap {
+    transform: rotate(-8deg) scale(1.1);
+  }
+
+  .card-links {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  /* ── Link buttons with lift + orange ── */
+  .link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    color: var(--color-text-tertiary);
+    transition:
+      color var(--duration-base) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .link-btn:hover {
+    color: var(--color-primary);
+    background: var(--color-surface);
+    transform: translateY(-2px);
+  }
+
+  .project-card:hover .card-title {
+    color: var(--color-primary);
+  }
+
+  .card-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+
+  .card-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    flex: 1;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
+    border-radius: var(--radius-full);
+    font-weight: 500;
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .card-tilt-wrapper {
+      transform: none !important;
+      transition: border-color var(--duration-fast) var(--ease-standard);
+    }
+    .card-accent-line {
+      transform: scaleX(1);
+      transition: none;
+    }
+    .card-spotlight {
+      display: none;
+    }
+    .card-icon-wrap {
+      transition: none;
+    }
+    .link-btn {
+      transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+    }
+  }
+
+  /* ── Touch devices: no tilt/spotlight ── */
+  @media (hover: none) {
+    .card-spotlight {
+      display: none;
+    }
+    .card-tilt-wrapper {
+      transform: none !important;
+    }
+  }
+</style>

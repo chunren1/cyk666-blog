@@ -1,0 +1,145 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import '@fontsource-variable/inter';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = 'KKstar 的个人主页',
+  description = '全栈开发者 KKstar 的个人技术博客，分享 Java 后端、Vue 前端、全栈开发经验。',
+  ogImage = '/favicon.svg',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="KKstar" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+    <meta property="og:locale" content="zh_CN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <ClientRouter />
+
+    <!-- Dark mode init — runs before paint to prevent flash -->
+    <script is:inline>
+      (function() {
+        function getTheme() {
+          var stored = localStorage.getItem('theme');
+          return stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        }
+        function applyTheme() {
+          document.documentElement.setAttribute('data-theme', getTheme());
+        }
+        applyTheme();
+        // View Transitions 导航会清空 <html> 属性（swapRootAttributes），这里兜底恢复
+        document.addEventListener('astro:after-swap', applyTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- 轻量滚动显现：IntersectionObserver + CSS 类，无第三方库 -->
+    <script>
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              revealObserver.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      const observeReveals = () => {
+        document.querySelectorAll('.reveal:not(.is-revealed)').forEach((el) => {
+          revealObserver.observe(el);
+        });
+      };
+
+      // MPA 导航（View Transitions）后重新挂载
+      document.addEventListener('astro:page-load', observeReveals);
+      observeReveals();
+    </script>
+
+    <!-- Scroll progress bar (rAF-throttled) -->
+    <script>
+      (function () {
+        var ticking = false;
+
+        function updateProgress() {
+          var scrollTop =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          var scrollHeight =
+            document.documentElement.scrollHeight -
+            document.documentElement.clientHeight;
+          var progress =
+            scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+          document.documentElement.style.setProperty(
+            '--scroll-progress',
+            String(progress / 100)
+          );
+          ticking = false;
+        }
+
+        window.addEventListener(
+          'scroll',
+          function () {
+            if (!ticking) {
+              requestAnimationFrame(updateProgress);
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+
+        document.addEventListener('astro:page-load', function () {
+          requestAnimationFrame(updateProgress);
+        });
+
+        updateProgress();
+      })();
+    </script>
+  </body>
+</html>

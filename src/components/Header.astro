@@ -1,0 +1,424 @@
+---
+import { Menu, X, ArrowUpRight } from '@lucide/astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const navItems = [
+  { label: '首页', href: '/' },
+  { label: '文章', href: '/#articles' },
+  { label: '项目', href: '/#projects' },
+  { label: '关于', href: '/#about' },
+  { label: '音乐站', href: 'https://vibe.cyk666.top', external: true },
+];
+---
+
+<header class="header" id="site-header">
+  <div class="header-inner container">
+    <a href="/" class="logo" aria-label="回到首页">
+      <span class="logo-badge" aria-hidden="true">CYK</span>
+      <span class="logo-text">KKstar</span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="主导航">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { 'is-active': item.href === '/' && !item.external }]}
+          {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          data-nav-href={item.href}
+        >
+          {item.label}
+          {item.external && (
+            <ArrowUpRight size={13} class="external-icon" />
+          )}
+        </a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <ThemeToggle />
+      <button
+        id="mobile-menu-toggle"
+        class="mobile-menu-btn"
+        aria-label="打开菜单"
+        aria-expanded="false"
+      >
+        <Menu size={22} class="icon-menu" />
+        <X size={22} class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <nav class="mobile-nav" aria-label="移动端导航">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="mobile-nav-link"
+          {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          data-nav-href={item.href}
+        >
+          {item.label}
+          {item.external && (
+            <ArrowUpRight size={14} class="external-icon" />
+          )}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    border-bottom: 1px solid transparent;
+    height: var(--header-height);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    animation: headerSlideIn 300ms var(--ease-out) both;
+  }
+
+  @keyframes headerSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scroll-applied state — toggled via JS adding .is-scrolled class */
+  .header.is-scrolled {
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    border-bottom-color: var(--color-border);
+  }
+
+  @supports (backdrop-filter: blur(1px)) {
+    .header.is-scrolled {
+      background: color-mix(in srgb, var(--color-bg) 60%, transparent);
+      backdrop-filter: blur(12px) saturate(1.2);
+    }
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  /* ── Logo ── */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: var(--text-base);
+    letter-spacing: -0.01em;
+  }
+
+  .logo:hover {
+    color: var(--color-primary);
+  }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transition: transform var(--duration-fast) var(--ease-standard),
+                background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .logo:hover .logo-badge {
+    transform: rotate(-6deg) scale(1.05);
+    background: var(--color-primary-dark);
+  }
+
+  [data-theme="dark"] .logo:hover .logo-badge {
+    background: var(--color-primary-light);
+  }
+
+  .logo-text {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    transition: transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .logo:hover .logo-text {
+    transform: scale(1.05);
+  }
+
+  /* ── Desktop Nav ── */
+  .nav-desktop {
+    display: none;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  @media (min-width: 769px) {
+    .nav-desktop {
+      display: flex;
+    }
+  }
+
+  .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: var(--space-3);
+    right: var(--space-3);
+    height: 2px;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .nav-link:hover {
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+
+  .nav-link:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Active nav link — orange text + dot */
+  .nav-link.is-active {
+    color: var(--color-primary);
+  }
+
+  .nav-link.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+  }
+
+  .external-icon {
+    margin-left: 3px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ── Header Actions ── */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* ── Mobile Menu Button ── */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .mobile-menu-btn:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .mobile-menu-btn .icon-close {
+    display: none;
+  }
+
+  .mobile-menu-btn[aria-expanded="true"] .icon-menu {
+    display: none;
+  }
+
+  .mobile-menu-btn[aria-expanded="true"] .icon-close {
+    display: block;
+  }
+
+  @media (min-width: 769px) {
+    .mobile-menu-btn {
+      display: none;
+    }
+  }
+
+  /* ── Mobile Menu ── */
+  .mobile-menu {
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-bg-card);
+    padding: var(--space-4) var(--space-6);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+
+  .mobile-menu:not([hidden]) {
+    animation: mobileMenuIn 200ms var(--ease-out) both;
+  }
+
+  @keyframes mobileMenuIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .mobile-nav-link:hover {
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+
+  @media (min-width: 769px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const SCROLL_THRESHOLD = 80;
+
+  // 事件委托到 document —— View Transitions 导航替换 DOM 后依然有效，无需重新绑定
+  document.addEventListener('click', (e) => {
+    const toggle = (e.target as Element).closest('#mobile-menu-toggle');
+    if (!toggle) return;
+    const menu = document.getElementById('mobile-menu');
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    if (expanded) {
+      menu?.setAttribute('hidden', '');
+    } else {
+      menu?.removeAttribute('hidden');
+    }
+  });
+
+  // 运行时查询元素 —— 每次调用拿当前 DOM 里的节点，避免引用导航前旧元素
+  function onScroll() {
+    const header = document.getElementById('site-header');
+    if (window.scrollY > SCROLL_THRESHOLD) {
+      header?.classList.add('is-scrolled');
+    } else {
+      header?.classList.remove('is-scrolled');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Active nav highlighting for anchor sections
+  function updateActiveNav() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+    const scrollY = window.scrollY + 120; // offset for header + some margin
+
+    // Reset all
+    navLinks.forEach((link) => link.classList.remove('is-active'));
+
+    // Check anchor sections first (articles, projects, about)
+    const sections = ['articles', 'projects', 'about'];
+    let matched = false;
+
+    for (const id of sections) {
+      const el = document.getElementById(id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        const bottom = top + rect.height;
+
+        if (scrollY >= top && scrollY < bottom) {
+          navLinks.forEach((link) => {
+            if (link.getAttribute('data-nav-href') === `/#${id}`) {
+              link.classList.add('is-active');
+            }
+          });
+          matched = true;
+          break;
+        }
+      }
+    }
+
+    // If no section matched and we're on home page, highlight 首页
+    if (!matched && currentPath === '/') {
+      // Only highlight home if we're near the top
+      if (scrollY < 600) {
+        navLinks.forEach((link) => {
+          if (link.getAttribute('data-nav-href') === '/') {
+            link.classList.add('is-active');
+          }
+        });
+      }
+    }
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  // View Transitions 导航后 scrollY 归零，重新同步 header 状态与导航高亮
+  document.addEventListener('astro:page-load', () => {
+    onScroll();
+    updateActiveNav();
+  });
+
+  onScroll(); // set initial state
+  updateActiveNav();
+</script>

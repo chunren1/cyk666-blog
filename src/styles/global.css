@@ -1,0 +1,592 @@
+/* ============================================
+   Design Tokens & Global Styles — v2 (2026-08)
+   KKstar 的个人博客 — cyk666.top
+   设计路线：Notion 式暖中性色 + 单一橙色 accent
+   参考：Vercel 留白 / Stripe 圆角纪律 / Linear 深色明度堆叠
+         / Apple 分段节奏 / 中文排版硬指标（W3C clreq）
+   ============================================ */
+
+/* --- CSS Custom Properties (Light Mode) --- */
+:root {
+  /* ── 暖中性色（带黄棕底调，不用冷灰/纯黑）── */
+  --color-bg: #faf7f2;          /* 页面底色：暖米白 */
+  --color-bg-elevated: #f3eee5; /* 交替区块/页脚底 */
+  --color-bg-card: #ffffff;     /* 卡片表面 */
+  --color-bg-code: #f0eae0;     /* 代码/引用/内嵌容器（暖底） */
+  --color-surface: #f3eee5;     /* 次级交互底：按钮hover/标签 */
+  --color-border: rgba(28, 24, 18, 0.10);   /* 耳语级边框 */
+  --color-border-light: rgba(28, 24, 18, 0.06);
+
+  /* ── 文本（暖近黑 → 弱化灰，全部带暖调）── */
+  --color-text: #211c15;        /* 正文：暖近黑 */
+  --color-text-secondary: #57503f;
+  --color-text-tertiary: #8a8272;
+  --color-text-inverse: #ffffff;
+
+  /* ── 橙色阶（Tailwind orange，WCAG 已验证）──
+     --color-primary 用于链接/强调文本（白底 4.5:1 达标）
+     --accent 用于品牌强调/按钮底（UI 组件 3:1 达标）  */
+  --color-primary: #ea580c;     /* orange-600 链接/主按钮 */
+  --color-primary-light: #fb923c; /* orange-400 */
+  --color-primary-dark: #c2410c;  /* orange-700 hover */
+  --color-primary-bg: #fff7ed;    /* orange-50 徽章/标签底 */
+  --accent: #f97316;            /* orange-500 品牌强调 */
+
+  /* ── 语义状态 ── */
+  --color-success: #3e7b4f;
+  --color-warning: #8a6d1a;
+  --color-error: #b43a2e;
+  --color-info: #3d6f9e;
+
+  /* ── Spacing scale（4px 基底）── */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-7: 2rem;      /* 32px */
+  --space-8: 2.5rem;    /* 40px */
+  --space-10: 3rem;     /* 48px */
+  --space-12: 4rem;     /* 64px */
+  --space-16: 5rem;     /* 80px */
+  --space-20: 6rem;     /* 96px — 区块呼吸感（Vercel 96-128） */
+  --space-24: 8rem;     /* 128px — 大区块 */
+
+  /* ── Border radius（一套值全站用：按钮6/卡片12/面板16）── */
+  --radius-sm: 6px;     /* 按钮/控件 */
+  --radius-md: 10px;    /* 通用小面 */
+  --radius-lg: 12px;    /* 卡片 */
+  --radius-xl: 16px;    /* 面板/大容器 */
+  --radius-full: 9999px;
+
+  /* ── Shadows（暖调、克制的四层体系）── */
+  --shadow-xs: 0 1px 2px rgba(33, 28, 21, 0.04);
+  --shadow-sm: 0 2px 8px rgba(33, 28, 21, 0.06);
+  --shadow-md: 0 4px 16px rgba(33, 28, 21, 0.08);
+  --shadow-lg: 0 8px 32px rgba(33, 28, 21, 0.10);
+  --shadow-xl: 0 16px 48px rgba(33, 28, 21, 0.12);
+
+  /* ── Typography（西文在前，中文系统字体在后）── */
+  --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, "Cascadia Code",
+    Consolas, "Courier New", monospace;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+
+  /* ── Type scale（中文正文 17px 基准，标题上限 40px）── */
+  --text-xs: 0.75rem;      /* 12px 元数据 */
+  --text-sm: 0.875rem;     /* 14px 小标签/摘要 */
+  --text-base: 1.0625rem;  /* 17px 正文（最小舒适） */
+  --text-lg: 1.1875rem;    /* 19px 增强正文 */
+  --text-xl: 1.25rem;      /* 20px 卡片标题 */
+  --text-2xl: 1.5rem;      /* 24px h3 */
+  --text-3xl: 1.75rem;     /* 28px h2 */
+  --text-4xl: 2.25rem;     /* 36px h1 */
+  --text-5xl: 2.5rem;      /* 40px hero 上限（中文不追西文 64px） */
+
+  /* ── Line heights（中文正文 1.75，标题 1.2-1.3）── */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.75;
+  --leading-relaxed: 1.75;
+  --leading-hero: 1.15;
+
+  /* ── Letter spacing（中文正文微正，仅西文标题用负）── */
+  --tracking-body: 0.02em;
+  --tracking-label: 0.08em;
+  --tracking-display: -0.02em;
+
+  /* ── Motion（Stripe ease + 统一时长刻度，全部纯CSS）── */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-base: 250ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-slow: 400ms cubic-bezier(0.2, 0, 0, 1);
+
+  /* ── Layout ── */
+  --max-w-content: 720px;   /* 文章：30-40 中文字行宽 */
+  --max-w-wide: 1080px;     /* 内容区 */
+  --max-w-full: 1120px;     /* 全站 */
+  --header-height: 56px;
+
+  /* ── Noise texture overlay ── */
+  --noise-opacity: 0.025;
+
+  /* ── 中英文/数字自动间距（原生，替代 pangu.js）── */
+  text-autospace: normal;
+  text-spacing-trim: trim-start;
+}
+
+/* --- Dark Mode（Linear 式：层级靠更亮表面，不用纯黑/纯白）--- */
+[data-theme="dark"] {
+  --color-bg: #1a1612;          /* 暖近黑画布 */
+  --color-bg-elevated: #211c16;
+  --color-bg-card: #262019;     /* 卡片比底色亮一级 */
+  --color-bg-code: #120f0b;     /* 代码块最暗一层 */
+  --color-surface: #262019;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.05);
+
+  --color-text: #ede6da;        /* 暖米白，不纯白 */
+  --color-text-secondary: #b3a996;
+  --color-text-tertiary: #7c7363;
+  --color-text-inverse: #1a1612;
+
+  /* 深色下 accent 用浅一档保对比 */
+  --color-primary: #fb923c;     /* orange-400 */
+  --color-primary-light: #fdba74; /* orange-300 */
+  --color-primary-dark: #fb923c;
+  --color-primary-bg: #2a1f18;
+  --accent: #fb923c;
+
+  --color-success: #6fae7e;
+  --color-warning: #c9a34d;
+  --color-error: #d97a6e;
+  --color-info: #6f9cc4;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.40);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.45);
+
+  --noise-opacity: 0.03;
+}
+
+/* --- CSS Reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-body);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* 代码/预格式化容器关闭自动间距（避免破坏缩进） */
+pre, code, kbd, samp {
+  text-autospace: no-autospace;
+  text-spacing-trim: none;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--color-primary-light);
+}
+
+p {
+  line-height: var(--leading-relaxed);
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+  letter-spacing: var(--tracking-display);
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); }
+
+/* --- Prose / Article Content --- */
+.prose {
+  max-width: var(--max-w-content);
+  margin: 0 auto;
+}
+
+.prose > * + * {
+  margin-top: 1.5em;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+.prose h2 {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose p {
+  line-height: var(--leading-relaxed);
+}
+
+.prose ul, .prose ol {
+  padding-left: 1.5em;
+  line-height: var(--leading-relaxed);
+}
+
+.prose li {
+  margin-top: 0.4em;
+}
+
+.prose li::marker {
+  color: var(--color-primary);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.prose em {
+  font-style: italic;
+}
+
+/* Inline code */
+.prose code:not(pre code) {
+  background: var(--color-bg-code);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .prose code:not(pre code) {
+  color: var(--color-primary-light);
+}
+
+/* Code blocks（GitHub 式：亮色主题下代码块是嵌入页面的暗色窗口） */
+.prose pre {
+  background: #1e1b17 !important;  /* 两个主题都保持深色窗口 */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  margin-top: var(--space-6);
+}
+
+.prose pre code {
+  background: none !important;
+  border: none !important;
+  padding: 0;
+  font-size: inherit;
+  /* 不覆盖 Shiki token 颜色 —— github-dark 主题已为 #1e1b17 背景调校 */
+}
+
+/* Blockquotes */
+.prose blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-primary-bg);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+/* Tables */
+.prose table {
+  display: block;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-top: var(--space-6);
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose th, .prose td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose th:first-child, .prose td:first-child {
+  border-left: 1px solid var(--color-border);
+}
+
+.prose th:last-child, .prose td:last-child {
+  border-right: 1px solid var(--color-border);
+}
+
+.prose thead th {
+  border-top: 1px solid var(--color-border);
+}
+
+.prose th {
+  background: var(--color-surface);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
+/* Horizontal rule */
+.prose hr {
+  border: none;
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-10) 0;
+}
+
+/* Images */
+.prose img {
+  border-radius: var(--radius-lg);
+  margin: var(--space-8) auto;
+}
+
+/* --- Utility Classes --- */
+.container {
+  width: 100%;
+  max-width: var(--max-w-full);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.container-narrow {
+  max-width: var(--max-w-content);
+}
+
+.container-wide {
+  max-width: var(--max-w-wide);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --- Section spacing（96px 区块呼吸感）--- */
+.section {
+  padding: var(--space-20) 0;
+}
+
+.section-title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.section-desc {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-8);
+  font-size: var(--text-lg);
+}
+
+/* --- Reveal on scroll（轻量：纯 CSS + IntersectionObserver 加类）--- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* --- Selection --- */
+::selection {
+  background: rgba(234, 88, 12, 0.15);
+  color: inherit;
+}
+
+[data-theme="dark"] ::selection {
+  background: rgba(251, 146, 60, 0.25);
+  color: inherit;
+}
+
+/* --- Scroll Progress Bar --- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--accent));
+  transform-origin: left;
+  transform: scaleX(var(--scroll-progress, 0));
+  z-index: 200;
+  pointer-events: none;
+}
+
+/* --- View Transitions --- */
+::view-transition-old(root) {
+  animation: vt-fade-out 200ms var(--ease-standard) both;
+}
+
+::view-transition-new(root) {
+  animation: vt-fade-in 200ms var(--ease-standard) both;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Reduced Motion（无障碍）--- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 52px;
+  }
+
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+
+  .section {
+    padding: var(--space-12) 0;
+  }
+
+  .container {
+    padding: 0 var(--space-4);
+  }
+}

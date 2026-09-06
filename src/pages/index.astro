@@ -1,0 +1,858 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { Music, ArrowUpRight } from '@lucide/astro';
+import GithubIcon from '../components/GithubIcon.astro';
+
+const articles = (await getCollection('articles'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const projects = [
+  {
+    title: 'vibeMusic',
+    description: '全栈音乐平台 — 从零构建的在线音乐播放器，支持歌单管理、歌词同步、个性化推荐。前后端分离架构，部署于 Cloudflare。',
+    repo: 'https://github.com/chunren1/vibeMusic',
+    demo: 'https://vibe.cyk666.top',
+    tags: ['Vue 3', 'Java', '全栈', 'Cloudflare'],
+  },
+  {
+    title: 'LanShare',
+    description: '局域网文件共享工具 — 电脑/手机/平板通过浏览器互相传输文件，无需外网。支持大文件分片上传、断点续传、秒传、打包下载与在线预览。',
+    repo: 'https://github.com/chunren1/LanShare-Source',
+    demo: undefined,
+    tags: ['Python', 'Node.js', '局域网', '文件传输'],
+  },
+  {
+    title: '学研在线',
+    description: '微服务教育平台 — 面向在线教育场景的微服务架构实践，涵盖用户中心、课程管理、学习进度追踪等核心模块。',
+    repo: 'https://github.com/chunren1/xueyan',
+    demo: undefined,
+    tags: ['微服务', 'Java', 'Spring Boot', '教育'],
+  },
+  {
+    title: 'JavaInfoHub',
+    description: 'Java 开发者信息聚合平台 — 聚合 4 个技术源的文章与资讯，结合 AI 智能增强。WebMagic/Jsoup 爬虫 + React 18 + Spring Boot。',
+    repo: 'https://github.com/chunren1/JavaInfoHub',
+    demo: undefined,
+    tags: ['React', 'Spring Boot', '爬虫', 'AI'],
+  },
+  {
+    title: 'JobRader',
+    description: 'AI 求职雷达 — Chrome 插件 + Next.js 的求职效率工具，一键采集招聘网站岗位数据，AI 语义分析智能评分与简历匹配度分析。',
+    repo: 'https://github.com/chunren1/JobRader',
+    demo: undefined,
+    tags: ['Chrome 插件', 'Next.js', 'AI', '求职'],
+  },
+  {
+    title: 'Myworker',
+    description: '个人作品集网站 — 面向求职展示的全栈工程师作品集，Next.js 14 + Framer Motion 动效，突出技术能力与项目经验。',
+    repo: 'https://github.com/chunren1/Myworker',
+    demo: 'https://myworker-three.vercel.app',
+    tags: ['Next.js', 'React', 'Framer Motion', '作品集'],
+  },
+  {
+    title: 'blog',
+    description: '本站博客应用 — 本博客的源码仓库，基于 Astro 构建的静态技术博客，支持暗色模式和中文优化排版。（原 testWeb，已重命名为 blog）',
+    repo: 'https://github.com/chunren1/testWeb',
+    demo: undefined,
+    tags: ['Astro', '静态站点', '博客'],
+  },
+];
+---
+
+<BaseLayout>
+  <!-- Hero Section -->
+  <section class="hero">
+    <!-- Animated gradient background blobs -->
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-blob hero-blob-1"></div>
+      <div class="hero-blob hero-blob-2"></div>
+      <div class="hero-blob hero-blob-3"></div>
+      <div class="hero-grid-pattern"></div>
+    </div>
+
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge" data-anim="fade-up" data-delay="0">
+          <span class="live-dot"></span>
+          全栈开发者
+        </div>
+        <h1 class="hero-title" data-anim="fade-up" data-delay="1">
+          你好，我是<br />
+              <span class="hero-name">KKstar</span>
+        </h1>
+        <p class="hero-desc" data-anim="fade-up" data-delay="2">
+          热爱技术，专注于 Java 后端与 Vue 前端开发。<br class="hide-mobile" />
+          独立开发 vibeMusic 音乐平台，喜欢用代码创造有趣的事物。
+        </p>
+        <div class="hero-links" data-anim="fade-up" data-delay="3">
+          <a href="https://vibe.cyk666.top" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            <Music size={18} />
+            前往音乐站
+          </a>
+          <a href="https://github.com/chunren1" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <GithubIcon size={18} />
+            GitHub
+          </a>
+          <a href="https://github.com/chunren1/vibeMusic" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+            vibeMusic 源码
+            <ArrowUpRight size={14} />
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual" data-anim="fade-up" data-delay="1">
+        <div class="hero-avatar">
+          <div class="avatar-glow" aria-hidden="true"></div>
+          <img src="/avatar.jpg" alt="KKstar 的头像" class="avatar-img" width="96" height="96" loading="eager" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <a href="#articles" class="scroll-indicator" aria-label="向下滚动" data-anim="fade-up" data-delay="4">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="1" width="6" height="12" rx="3"></rect>
+        <path d="M12 17l0 4"></path>
+        <path d="M8 21l4 0"></path>
+      </svg>
+    </a>
+  </section>
+
+  <script>
+    // Trigger staggered hero entrance animations.
+    // View Transitions 导航替换 DOM 后，新元素没有 .hero-animate 类（默认 opacity: 0），
+    // 必须监听 astro:page-load 在每次导航后重新执行。
+    function initHeroAnimations() {
+      document.querySelectorAll('[data-anim="fade-up"]').forEach((el) => {
+        el.classList.add('hero-animate');
+      });
+    }
+    document.addEventListener('astro:page-load', initHeroAnimations);
+    initHeroAnimations();
+  </script>
+
+  <!-- Articles Section -->
+  <section id="articles" class="section">
+    <div class="container container-wide reveal">
+      <h2 class="section-title">技术笔记</h2>
+      <p class="section-desc">记录开发过程中的思考与实践</p>
+
+      {articles.length > 0 ? (
+        <div class="articles-grid">
+          {articles.map((article) => (
+            <ArticleCard
+              title={article.data.title}
+              date={article.data.date}
+              description={article.data.description}
+              tags={article.data.tags}
+              slug={article.id}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>文章正在撰写中，敬请期待 ✨</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="section">
+    <div class="container container-wide reveal">
+      <h2 class="section-title">开源项目</h2>
+      <p class="section-desc">用代码创造有价值的产品</p>
+
+      <div class="projects-grid">
+        {projects.map((project) => (
+          <ProjectCard
+            title={project.title}
+            description={project.description}
+            repo={project.repo}
+            demo={project.demo}
+            tags={project.tags}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="container container-narrow reveal">
+      <h2 class="section-title">关于我</h2>
+      <p class="section-desc">一个热爱技术的全栈开发者</p>
+
+      <div class="about-content">
+        <p>
+          我是 KKstar，一名全栈开发者。日常以 Java 后端和 Vue 前端为主要技术栈，
+          同时对独立开发充满热情。目前正在打造 vibeMusic —— 一个从零构建的全栈音乐平台。
+        </p>
+
+        <div class="skills-section">
+          <h3 class="skills-title">技术栈</h3>
+          <div class="skills-grid">
+            <div class="skill-group">
+              <h4 class="skill-category">后端</h4>
+              <div class="skill-tags">
+                <span class="skill-tag">Java</span>
+                <span class="skill-tag">Spring Boot</span>
+                <span class="skill-tag">微服务</span>
+                <span class="skill-tag">MySQL</span>
+                <span class="skill-tag">Redis</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h4 class="skill-category">前端</h4>
+              <div class="skill-tags">
+                <span class="skill-tag">Vue 3</span>
+                <span class="skill-tag">TypeScript</span>
+                <span class="skill-tag">Astro</span>
+                <span class="skill-tag">Tailwind CSS</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <h4 class="skill-category">工具 & 平台</h4>
+              <div class="skill-tags">
+                <span class="skill-tag">Git</span>
+                <span class="skill-tag">Docker</span>
+                <span class="skill-tag">Cloudflare</span>
+                <span class="skill-tag">Nginx</span>
+                <span class="skill-tag">Linux</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ============================================
+     HERO — Premium Portfolio Showcase
+     ============================================ */
+
+  /* --- Hero Container --- */
+  .hero {
+    padding: var(--space-16) 0 var(--space-20);
+    position: relative;
+    overflow: hidden;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* --- Animated Gradient Background --- */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    will-change: transform;
+  }
+
+  .hero-blob-1 {
+    width: 600px;
+    height: 600px;
+    top: -20%;
+    right: -10%;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  }
+
+  .hero-blob-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -25%;
+    left: -5%;
+    background: radial-gradient(circle, var(--color-primary-light) 0%, transparent 70%);
+  }
+
+  .hero-blob-3 {
+    width: 400px;
+    height: 400px;
+    top: 30%;
+    left: 40%;
+    background: radial-gradient(circle, var(--color-primary-bg) 0%, transparent 70%);
+    opacity: 0.25;
+  }
+
+  [data-theme="dark"] .hero-blob { opacity: 0.08; }
+  [data-theme="dark"] .hero-blob-3 { opacity: 0.12; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-blob-1 { animation: blobDrift1 18s ease-in-out infinite; }
+    .hero-blob-2 { animation: blobDrift2 22s ease-in-out infinite; }
+    .hero-blob-3 { animation: blobDrift3 25s ease-in-out infinite; }
+  }
+
+  @keyframes blobDrift1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-40px, 30px) scale(1.05); }
+    66% { transform: translate(20px, -20px) scale(0.95); }
+  }
+
+  @keyframes blobDrift2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.08); }
+    66% { transform: translate(-20px, 15px) scale(0.92); }
+  }
+
+  @keyframes blobDrift3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-30px, -25px) scale(1.1); }
+  }
+
+  /* --- Fine Dot Grid Pattern --- */
+  .hero-grid-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image:
+      radial-gradient(circle, var(--color-text) 0.75px, transparent 0.75px);
+    background-size: 28px 28px;
+  }
+
+  [data-theme="dark"] .hero-grid-pattern { opacity: 0.06; }
+
+  /* --- Hero Inner Layout --- */
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-content {
+    flex: 1;
+    max-width: 600px;
+  }
+
+  /* --- Badge with Live Dot --- */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-radius: var(--radius-full);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-6);
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .live-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .live-dot::after {
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+  }
+
+  @keyframes badgePulse {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(2.2); }
+  }
+
+  /* --- Title --- */
+  .hero-title {
+    font-size: var(--text-5xl);
+    font-weight: 800;
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-display);
+    margin-bottom: var(--space-6);
+  }
+
+  /* --- Name with Animated Sheen --- */
+  .hero-name {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary) 0%,
+      var(--color-primary-light) 40%,
+      var(--color-primary) 50%,
+      var(--color-primary-light) 60%,
+      var(--color-primary) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-name {
+      animation: nameSheen 4s ease-in-out infinite;
+    }
+  }
+
+  @keyframes nameSheen {
+    0%, 100% { background-position: 100% 50%; }
+    50% { background-position: 0% 50%; }
+  }
+
+  /* --- Description --- */
+  .hero-desc {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-8);
+  }
+
+  /* --- Hero Links --- */
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  /* ============================================
+     BUTTONS — Premium Micro-interactions
+     ============================================ */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Primary — shine sweep on hover */
+  .btn-primary {
+    background: var(--accent);
+    color: var(--color-text-inverse);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, white 25%, transparent) 50%,
+      transparent 100%
+    );
+    transition: none;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-primary:hover::after {
+      animation: btnShine 0.6s ease forwards;
+    }
+  }
+
+  @keyframes btnShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .btn-primary:hover {
+    background: var(--color-primary-dark);
+    color: var(--color-text-inverse);
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 20px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97) translateY(0);
+  }
+
+  [data-theme="dark"] .btn-primary:hover {
+    background: var(--color-primary-light);
+    color: var(--color-text-inverse);
+  }
+
+  /* Secondary — border + bg transition */
+  .btn-secondary {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    transition: all var(--duration-base) var(--ease-standard);
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-surface);
+    border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+    color: var(--color-text);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Ghost */
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-text-secondary);
+    padding: 10px 12px;
+  }
+
+  .btn-ghost:hover {
+    color: var(--color-primary);
+  }
+
+  .btn-ghost:hover :global(svg) {
+    transform: translateX(2px) translateY(-2px);
+  }
+
+  .btn-ghost :global(svg) {
+    transition: transform var(--transition-fast);
+  }
+
+  /* ============================================
+     AVATAR — Float + Glow Ring
+     ============================================ */
+
+  .hero-visual {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-avatar {
+      animation: avatarFloat 5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes avatarFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .hero-avatar:hover {
+    transform: translateY(-4px) scale(1.05);
+  }
+
+  /* Glow ring behind avatar */
+  .avatar-glow {
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 8%, transparent) 50%,
+      transparent 70%
+    );
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity var(--duration-base) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .avatar-glow {
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.08); }
+  }
+
+  .hero-avatar:hover .avatar-glow {
+    opacity: 1;
+  }
+
+  /* Clip the img to circle, let glow extend outside */
+  .hero-avatar > :not(.avatar-glow) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .avatar-img {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ============================================
+     SCROLL INDICATOR
+     ============================================ */
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    padding: var(--space-2);
+  }
+
+  .scroll-indicator:hover {
+    color: var(--color-primary);
+  }
+
+  .scroll-indicator svg {
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+  }
+
+  .scroll-indicator:hover svg {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-indicator {
+      animation: scrollBounce 2.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+    50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
+  }
+
+  /* ============================================
+     ENTRANCE ANIMATIONS — Staggered Fade-Up
+     ============================================ */
+
+  [data-anim="fade-up"] {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-anim="fade-up"].hero-animate {
+      animation: heroFadeUp 0.7s var(--ease-out) forwards;
+    }
+  }
+
+  /* Fallback: if no-JS or reduced-motion, show immediately */
+  @media (prefers-reduced-motion: reduce) {
+    [data-anim="fade-up"] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  [data-delay="0"].hero-animate { animation-delay: 0.1s; }
+  [data-delay="1"].hero-animate { animation-delay: 0.2s; }
+  [data-delay="2"].hero-animate { animation-delay: 0.35s; }
+  [data-delay="3"].hero-animate { animation-delay: 0.5s; }
+  [data-delay="4"].hero-animate { animation-delay: 0.65s; }
+
+  @keyframes heroFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* --- Articles Grid --- */
+  .articles-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-16) var(--space-8);
+    color: var(--color-text-tertiary);
+    font-size: var(--text-lg);
+  }
+
+  /* --- Projects Grid --- */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-5);
+  }
+
+  /* --- About --- */
+  .about-content {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .about-content > p {
+    margin-bottom: var(--space-8);
+  }
+
+  .skills-section {
+    margin-top: var(--space-8);
+  }
+
+  .skills-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-6);
+    color: var(--color-text);
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .skill-group {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
+  }
+
+  .skill-category {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .skill-tag {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    border: 1px solid var(--color-border-light);
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .skill-tag:hover {
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+
+  /* --- Responsive --- */
+  .hide-mobile {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hide-mobile {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--space-10) 0 var(--space-16);
+      min-height: auto;
+    }
+
+    .hero-inner {
+      flex-direction: column-reverse;
+      text-align: center;
+      gap: var(--space-8);
+    }
+
+    .hero-title {
+      font-size: var(--text-3xl);
+    }
+
+    .hero-links {
+      justify-content: center;
+    }
+
+    .hero-avatar {
+      width: 80px;
+      height: 80px;
+    }
+
+    .avatar-img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .hero-blob-1 { width: 350px; height: 350px; }
+    .hero-blob-2 { width: 300px; height: 300px; }
+    .hero-blob-3 { width: 250px; height: 250px; }
+
+    .scroll-indicator {
+      bottom: var(--space-4);
+    }
+
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

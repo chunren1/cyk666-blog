@@ -1,0 +1,100 @@
+---
+import { Sun, Moon } from '@lucide/astro';
+---
+
+<button
+  id="theme-toggle"
+  class="theme-toggle"
+  aria-label="切换深色模式"
+  title="切换深色模式"
+>
+  <Sun size={18} class="icon-sun" />
+  <Moon size={18} class="icon-moon" />
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Icon container — both icons stack via absolute positioning */
+  .theme-toggle :global(.icon-sun),
+  .theme-toggle :global(.icon-moon) {
+    position: absolute;
+    transition: opacity var(--duration-fast) var(--ease-standard),
+                transform var(--duration-fast) var(--ease-standard);
+  }
+
+  /* Light mode: show moon, hide sun */
+  :root:not([data-theme="dark"]) .theme-toggle :global(.icon-sun) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  :root:not([data-theme="dark"]) .theme-toggle :global(.icon-moon) {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  /* Dark mode: show sun, hide moon */
+  [data-theme="dark"] .theme-toggle :global(.icon-sun) {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  [data-theme="dark"] .theme-toggle :global(.icon-moon) {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+</style>
+
+<script data-astro-rerun>
+  // NOTE: data-astro-rerun 脚本会被 Astro 原样输出（不转译 TS），必须写纯 JS
+  function getThemePreference() {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }
+
+  setTheme(getThemePreference());
+
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+</script>

@@ -1,0 +1,11 @@
+{
+  "lsp": {
+    "astro": {
+      "initialization": {
+        "typescript": {
+          "tsdk": "/home/user/.nvm/versions/node/v24.19.0/lib/node_modules/typescript/lib"
+        }
+      }
+    }
+  }
+}

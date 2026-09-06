@@ -1,0 +1,190 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+const bodyText = article.body ?? '';
+const wordCount = bodyText.replace(/```[\s\S]*?```/g, '').replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').length;
+---
+
+<ArticleLayout
+  title={article.data.title}
+  date={article.data.date}
+  description={article.data.description}
+  tags={article.data.tags}
+  wordCount={wordCount}
+>
+  <Content />
+</ArticleLayout>
+
+<script>
+function enhanceCodeBlocks() {
+  const prose = document.querySelector('.prose');
+  if (!prose) return;
+
+  prose.querySelectorAll('pre').forEach((pre) => {
+    if (pre.closest('.code-block')) return;
+
+    const code = pre.querySelector('code');
+    if (!code) return;
+
+    // 语言名：优先 pre 的 data-language，其次 code 的 language-* 类
+    const lang =
+      pre.getAttribute('data-language') ||
+      (code.className.match(/language-(\w+)/) || [])[1] ||
+      'text';
+
+    // 复制用纯文本（无行号无高亮标记）
+    const rawText = pre.textContent || '';
+
+    // 包裹容器 + 标题栏
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+
+    const titleBar = document.createElement('div');
+    titleBar.className = 'code-block-title';
+
+    const langEl = document.createElement('span');
+    langEl.className = 'code-block-lang';
+    langEl.textContent = lang;
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'code-block-copy';
+    copyBtn.type = 'button';
+    copyBtn.setAttribute('aria-label', '复制代码');
+    copyBtn.textContent = '复制';
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(rawText).then(() => {
+        copyBtn.textContent = '✓ 已复制';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = '复制';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        copyBtn.textContent = '复制失败';
+        setTimeout(() => {
+          copyBtn.textContent = '复制';
+        }, 1500);
+      });
+    });
+
+    titleBar.appendChild(langEl);
+    titleBar.appendChild(copyBtn);
+    wrapper.appendChild(titleBar);
+    wrapper.appendChild(pre);
+  });
+}
+
+// 兼容 MPA 导航（若有 View Transitions/ClientRouter）
+document.addEventListener('astro:page-load', enhanceCodeBlocks);
+enhanceCodeBlocks();
+</script>
+
+<style is:global>
+  /* ── GitHub 式代码块外壳 ── */
+  .code-block {
+    position: relative;
+    margin-top: var(--space-6);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .code-block pre {
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #1e1b17 !important;
+  }
+
+  .code-block pre code {
+    counter-reset: code-line;
+  }
+
+  /* 行号：CSS counter，不破坏 Shiki 高亮 token */
+  .code-block pre code .line::before {
+    counter-increment: code-line;
+    content: counter(code-line);
+    display: inline-block;
+    width: 3ch;
+    margin-right: var(--space-4);
+    text-align: right;
+    color: rgba(255, 255, 255, 0.18);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .code-block-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    background: #262019;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    user-select: none;
+  }
+
+  .code-block-lang {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #9a8f7e;
+    text-transform: lowercase;
+  }
+
+  .code-block-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: #9a8f7e;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+    line-height: 1.4;
+  }
+
+  .code-block-copy:hover {
+    color: #e8e2d8;
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .code-block-copy:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .code-block-copy.copied {
+    color: #6fae7e;
+    border-color: #6fae7e;
+  }
+
+  /* 移动端全宽出血 */
+  @media (max-width: 768px) {
+    .code-block {
+      margin-left: calc(-1 * var(--space-4));
+      margin-right: calc(-1 * var(--space-4));
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+  }
+</style>
