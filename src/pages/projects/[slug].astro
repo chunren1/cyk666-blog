@@ -75,7 +75,20 @@ try {
   const res = await fetch(rawUrl);
   if (res.ok) {
     const md = await res.text();
-    readmeHtml = await marked.parse(md);
+    const toAbs = (p: string) => {
+      const t = p.trim();
+      if (/^(https?:\/\/|data:|#|mailto:|\/\/)/i.test(t)) return p;
+      const enc = t.replace(/^\.\//, '').split('/').map((s) => encodeURIComponent(s)).join('/');
+      return `https://raw.githubusercontent.com/${repoPath}/${project.branch}/${enc}`;
+    };
+    const fixed = md
+      .replace(/!\[[^\]]*\]\(([^)]+)\)/g, (full, p: string) => {
+        const tm = (p as string).match(/^(\S+)(\s+["'].*["'])?$/);
+        if (!tm) return full;
+        return full.replace(p as string, `${toAbs(tm[1])}${tm[2] ?? ''}`);
+      })
+      .replace(/<img([^>]*?)\ssrc=(["'])(.*?)\2/gi, (_m, pre: string, q: string, src: string) => `<img${pre} src=${q}${toAbs(src)}${q}`);
+    readmeHtml = await marked.parse(fixed);
   } else {
     readmeError = `README 拉取失败（${res.status}），请直接访问 GitHub 查看。`;
   }
