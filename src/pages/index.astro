@@ -5,61 +5,11 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 import { Music, ArrowUpRight } from '@lucide/astro';
 import GithubIcon from '../components/GithubIcon.astro';
+import { projects } from '../data/projects';
 
 const articles = (await getCollection('articles'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const projects = [
-  {
-    title: 'vibeMusic',
-    description: '全栈音乐平台 — 从零构建的在线音乐播放器，支持歌单管理、歌词同步、个性化推荐。前后端分离架构，部署于 Cloudflare。',
-    repo: 'https://github.com/chunren1/vibeMusic',
-    demo: 'https://vibe.cyk666.top',
-    tags: ['Vue 3', 'Java', '全栈', 'Cloudflare'],
-  },
-  {
-    title: 'LanShare',
-    description: '局域网文件共享工具 — 电脑/手机/平板通过浏览器互相传输文件，无需外网。支持大文件分片上传、断点续传、秒传、打包下载与在线预览。',
-    repo: 'https://github.com/chunren1/LanShare-Source',
-    demo: undefined,
-    tags: ['Python', 'Node.js', '局域网', '文件传输'],
-  },
-  {
-    title: '学研在线',
-    description: '微服务教育平台 — 面向在线教育场景的微服务架构实践，涵盖用户中心、课程管理、学习进度追踪等核心模块。',
-    repo: 'https://github.com/chunren1/xueyan',
-    demo: undefined,
-    tags: ['微服务', 'Java', 'Spring Boot', '教育'],
-  },
-  {
-    title: 'JavaInfoHub',
-    description: 'Java 开发者信息聚合平台 — 聚合 4 个技术源的文章与资讯，结合 AI 智能增强。WebMagic/Jsoup 爬虫 + React 18 + Spring Boot。',
-    repo: 'https://github.com/chunren1/JavaInfoHub',
-    demo: undefined,
-    tags: ['React', 'Spring Boot', '爬虫', 'AI'],
-  },
-  {
-    title: 'JobRader',
-    description: 'AI 求职雷达 — Chrome 插件 + Next.js 的求职效率工具，一键采集招聘网站岗位数据，AI 语义分析智能评分与简历匹配度分析。',
-    repo: 'https://github.com/chunren1/JobRader',
-    demo: undefined,
-    tags: ['Chrome 插件', 'Next.js', 'AI', '求职'],
-  },
-  {
-    title: 'Myworker',
-    description: '个人作品集网站 — 面向求职展示的全栈工程师作品集，Next.js 14 + Framer Motion 动效，突出技术能力与项目经验。',
-    repo: 'https://github.com/chunren1/Myworker',
-    demo: 'https://myworker-three.vercel.app',
-    tags: ['Next.js', 'React', 'Framer Motion', '作品集'],
-  },
-  {
-    title: 'blog',
-    description: '本站博客应用 — 本博客的源码仓库，基于 Astro 构建的静态技术博客，支持暗色模式和中文优化排版。（原 testWeb，已重命名为 blog）',
-    repo: 'https://github.com/chunren1/cyk666-blog',
-    demo: undefined,
-    tags: ['Astro', '静态站点', '博客'],
-  },
-];
 ---
 
 <BaseLayout>
