@@ -21,7 +21,9 @@ try {
   const m = project.repo.match(/github\.com\/([^/]+\/[^/]+)/);
   const repoPath = m ? m[1] : '';
   const rawUrl = `https://raw.githubusercontent.com/${repoPath}/${project.branch}/${project.readmePath ?? 'README.md'}`;
-  const res = await fetch(rawUrl);
+  // 8s 超时：raw.githubusercontent.com 偶发挂死，2026-10-29 曾让整次构建白等 5 分钟（默认超时 300s）。
+  // 超时走 catch 分支，页面显示降级文案 + GitHub 链接，不阻断其它页面构建。
+  const res = await fetch(rawUrl, { signal: AbortSignal.timeout(8000) });
   if (res.ok) {
     const md = await res.text();
     const toAbs = (p: string) => {
