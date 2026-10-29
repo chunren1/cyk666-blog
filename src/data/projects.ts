@@ -43,44 +43,6 @@ export const projects: Project[] = [
     tags: ['Python', 'Node.js', '局域网', '文件传输'],
   },
   {
-    slug: '学研在线',
-    title: '学研在线',
-    description:
-      '微服务教育平台 — 面向在线教育场景的微服务架构实践，涵盖用户中心、课程管理、学习进度追踪等核心模块。',
-    repo: 'https://github.com/chunren1/xueyan',
-    branch: 'main',
-    tags: ['微服务', 'Java', 'Spring Boot', '教育'],
-  },
-  {
-    slug: 'JavaInfoHub',
-    title: 'JavaInfoHub',
-    description:
-      'Java 开发者信息聚合平台 — 聚合 4 个技术源的文章与资讯，结合 AI 智能增强。WebMagic/Jsoup 爬虫 + React 18 + Spring Boot。',
-    repo: 'https://github.com/chunren1/JavaInfoHub',
-    branch: 'master',
-    tags: ['React', 'Spring Boot', '爬虫', 'AI'],
-  },
-  {
-    slug: 'JobRader',
-    title: 'JobRader',
-    description:
-      'AI 求职雷达 — Chrome 插件 + Next.js 的求职效率工具，一键采集招聘网站岗位数据，AI 语义分析智能评分与简历匹配度分析。',
-    repo: 'https://github.com/chunren1/JobRader',
-    branch: 'master',
-    tags: ['Chrome 插件', 'Next.js', 'AI', '求职'],
-  },
-  {
-    slug: 'Myworker',
-    title: 'Myworker',
-    description:
-      '个人作品集网站 — 面向求职展示的全栈工程师作品集，Next.js 14 + Framer Motion 动效，突出技术能力与项目经验。',
-    repo: 'https://github.com/chunren1/Myworker',
-    branch: 'main',
-    demo: 'https://myworker-three.vercel.app',
-    tags: ['Next.js', 'React', 'Framer Motion', '作品集'],
-    readmePath: 'TECH_DESIGN.md',
-  },
-  {
     slug: 'blog',
     title: 'blog',
     description:

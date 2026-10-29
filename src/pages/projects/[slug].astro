@@ -3,6 +3,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { marked } from 'marked';
 import { projects, projectBySlug } from '../../data/projects';
 
+/** 构建期拉 README：失败重试 3 次（1s/2s 退避），全失败才降级。见下方调用处注释。 */
+async function fetchReadme(url: string): Promise<Response> {
+  let lastResponse: Response | undefined;
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 1000 * attempt));
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (res.ok) return res;
+      // 4xx（仓库/分支/文件名写错）重试没意义，直接返回让页面显示具体状态码
+      if (res.status >= 400 && res.status < 500) return res;
+      lastResponse = res;
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  if (lastResponse) return lastResponse;
+  throw lastError;
+}
+
 
 export function getStaticPaths() {
   return projects.map((p) => ({ params: { slug: p.slug } }));
@@ -23,7 +43,11 @@ try {
   const rawUrl = `https://raw.githubusercontent.com/${repoPath}/${project.branch}/${project.readmePath ?? 'README.md'}`;
   // 8s 超时：raw.githubusercontent.com 偶发挂死，2026-10-29 曾让整次构建白等 5 分钟（默认超时 300s）。
   // 超时走 catch 分支，页面显示降级文案 + GitHub 链接，不阻断其它页面构建。
-  const res = await fetch(rawUrl, { signal: AbortSignal.timeout(8000) });
+  //
+  // 重试 3 次：这条链路是**构建期**依赖，一次抖动就会把「README 加载失败」永久烘进静态产物
+  // （2026-10-29 实测：同一批构建里 7 个项目页全失败，而重跑时同一 URL 1.4s 就 200）。
+  // 静态站没有运行时兜底，只能在这里补重试，否则线上项目页会长期显示降级文案。
+  const res = await fetchReadme(rawUrl);
   if (res.ok) {
     const md = await res.text();
     const toAbs = (p: string) => {

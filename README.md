@@ -4,8 +4,8 @@
 
 ## 这是什么
 
-- 首页：个人介绍 ＋ 技术文章列表 ＋ 项目卡片矩阵（7 个：vibeMusic / LanShare / 学研在线 / JavaInfoHub / JobRader / Myworker / blog）
-- `/articles/[slug]`：技术笔记详情页（7 篇：内网穿透、MySQL、SSH 反向隧道、WSL、vibeMusic、学研在线）
+- 首页：个人介绍 ＋ 技术文章列表 ＋ 项目卡片矩阵（3 个：vibeMusic / LanShare / blog）
+- `/articles/[slug]`：技术笔记详情页（7 篇：内网穿透、MySQL 8.4、SSH 反向隧道、WSL systemd、WSL+Win 开发、vibeMusic、学研在线）
 - `/projects/[slug]`：项目详情页——标题/描述/标签/源码按钮 ＋ **实时拉取对应 GitHub 仓库 `README.md` 渲染的技术笔记区**，与源码保持同步
 - 暗色模式（防闪烁初始化）、中文排版优化、移动端适配、`prefers-reduced-motion` 降级
 
