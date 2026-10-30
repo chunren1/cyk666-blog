@@ -21,6 +21,20 @@ else
   npm run build
 fi
 
+# 产物门禁：README 是构建期抓取的，网络抖一次就会把降级文案永久烘进静态页
+# （2026-10-29 实测：现网 7 个页全是降级）。重试只降概率，死链（仓库 404）重试救不了，
+# 所以必须用门禁把「带降级文案的 dist」挡在 rsync 之前，而不是靠部署后人工 grep。
+echo "==> [1/4] 产物门禁：README 降级文案不得进入 dist"
+DEGRADED=$(grep -rl "README 加载失败" dist 2>/dev/null || true)
+if [[ -n "$DEGRADED" ]]; then
+  echo "    FAIL: 以下产物含「README 加载失败」降级文案：" >&2
+  echo "$DEGRADED" | sed 's/^/      /' >&2
+  echo "    修法：仓库已 404 的删 src/data/projects.ts 条目；否则确认网络/GitHub 限流后重建。" >&2
+  echo "    （门禁在 rsync 之前，服务器上的线上版本未被改动）" >&2
+  exit 1
+fi
+echo "    OK: 无降级文案"
+
 echo "==> [2/4] rsync 全量同步到 $SERVER:$REMOTE_DIR"
 # --delete: 服务器与本地 dist 严格一致，清除旧 hash 残留文件
 rsync -az --delete -e "ssh -o ConnectTimeout=20 -o ServerAliveInterval=10" \
